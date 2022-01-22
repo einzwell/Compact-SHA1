@@ -34,39 +34,39 @@ int SHA1Hash(const U8 *restrict msg, const U64 mLen, U8 *restrict digest) {
 	/* Calculate the total length of message plus padding */
 	U64 pmLen = mLen + (64 - (mLen % 56) + ((mLen < 56) ? 0 : 8));
 
-    /* Initialise the word schedule, the padded message, the IVs, and the constants */
-    U32 word[80];
-    U8 padMsg[pmLen];
+	/* Initialise the word schedule, the padded message, the IVs, and the constants */
+	U32 word[80];
+	U8 padMsg[pmLen];
 	U32 h[5] = {0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0};
 	const U32 k[4] = {0x5A827999, 0x6ED9EBA1, 0x8F1BBCDC, 0xCA62C1D6};
 
-    /* Begin the padding process */
-    memset(padMsg, 0x00, pmLen);
-    memcpy(padMsg, msg, mLen);
-    padMsg[mLen] = 0x80;
-    for (size_t pmIdx = 8; pmIdx > 0; pmIdx--) {
-        padMsg[pmLen - pmIdx] = (U8)((mLen * 8) >> (pmIdx * 8 - 8));
-    }
+	/* Begin the padding process */
+	memset(padMsg, 0x00, pmLen);
+	memcpy(padMsg, msg, mLen);
+	padMsg[mLen] = 0x80;
+	for (size_t pmIdx = 8; pmIdx > 0; pmIdx--) {
+		padMsg[pmLen - pmIdx] = (U8)((mLen * 8) >> (pmIdx * 8 - 8));
+	}
 
-    /* Divide the padded message into 512-bit chunks */
+	/* Divide the padded message into 512-bit chunks */
 	for (size_t cIdx = 0; cIdx < pmLen / 64; cIdx++) {
-        /* Prepare the message schedule */
+		/* Prepare the message schedule */
 		for (size_t wIdx = 0; wIdx < 16; wIdx++) {
 			word[wIdx] = (padMsg[cIdx * 64 + wIdx * 4 + 0] << 24) +
-                         (padMsg[cIdx * 64 + wIdx * 4 + 1] << 16) +
-                         (padMsg[cIdx * 64 + wIdx * 4 + 2] << 8) +
-                         (padMsg[cIdx * 64 + wIdx * 4 + 3] << 0);
-        }
+						 (padMsg[cIdx * 64 + wIdx * 4 + 1] << 16) +
+						 (padMsg[cIdx * 64 + wIdx * 4 + 2] << 8) +
+						 (padMsg[cIdx * 64 + wIdx * 4 + 3] << 0);
+		}
 
-        for (size_t wIdx = 16; wIdx < 80; wIdx++) {
+		for (size_t wIdx = 16; wIdx < 80; wIdx++) {
 			word[wIdx] = word[wIdx - 3] ^ word[wIdx - 8] ^ word[wIdx - 14] ^ word[wIdx - 16];
 			word[wIdx] = (word[wIdx] << 1) | (word[wIdx] >> 31);
-        }
-        
-        /* Initialise the working variables with the intermediate hash value */
+		}
+		
+		/* Initialise the working variables with the intermediate hash value */
 		U32 a = h[0], b = h[1], c = h[2], d = h[3], e = h[4], t, f;
 
-        /* Begin the compression function */
+		/* Begin the compression function */
 		for (size_t wIdx = 0; wIdx < 80; wIdx++) {
 			f = (wIdx / 20 == 0) ? d ^ (b & (c ^ d) : (wIdx / 20 == 1 || wIdx / 20 == 3) ? b ^ c ^ d : (b & c) | (d & (b | c));
 			t = ((a << 5) | (a >> 27)) + f + e + k[wIdx / 20] + word[wIdx];
@@ -77,7 +77,7 @@ int SHA1Hash(const U8 *restrict msg, const U64 mLen, U8 *restrict digest) {
 			a = t;
 		}
 		
-        /* Compute the new intermediate hash value */
+		/* Compute the new intermediate hash value */
 		h[0] += a;
 		h[1] += b;
 		h[2] += c;
