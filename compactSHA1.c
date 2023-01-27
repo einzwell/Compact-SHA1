@@ -1,5 +1,5 @@
 /*!
- * @file C-SHA1.c
+ * @file compactSHA1.c
  * @author Yoga Smara (bravadine)
  * @brief A compact and portable implementation of SHA-1 in C with no external dependencies.
  *
@@ -13,10 +13,6 @@
 #include <stdint.h> // For fixed-width datatypes.
 #include <string.h> // For memset and memcpy; may be replaced with own customised functions if required.
 
-typedef uint64_t U64;
-typedef uint32_t U32;
-typedef uint8_t U8;
-
 /*!
  * @brief Calculates the SHA-1 hash of given input.
  *
@@ -27,25 +23,25 @@ typedef uint8_t U8;
  * @return 0 on success, otherwise non-zero.
  */
 
-int SHA1Hash(const U8 *restrict msg, const U64 mLen, U8 *restrict digest) {
+int compactSHA1(const uint8_t *restrict msg, const uint64_t mLen, uint8_t *restrict digest) {
 	/* Sanity check */
 	if (!msg || !digest) return -1;
 
 	/* Calculate the total length of message plus padding */
-	U64 pmLen = mLen + (64 - (mLen % 56) + ((mLen < 56) ? 0 : 8));
+	uint64_t pmLen = mLen + (64 - (mLen % 56) + ((mLen < 56) ? 0 : 8));
 
 	/* Initialise the word schedule, the padded message, the IVs, and the constants */
-	U32 word[80];
-	U8 padMsg[pmLen];
-	U32 h[5] = {0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0};
-	const U32 k[4] = {0x5A827999, 0x6ED9EBA1, 0x8F1BBCDC, 0xCA62C1D6};
+	uint32_t word[80];
+	uint8_t padMsg[pmLen];
+	uint32_t h[5] = {0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0};
+	const uint32_t k[4] = {0x5A827999, 0x6ED9EBA1, 0x8F1BBCDC, 0xCA62C1D6};
 
 	/* Begin the padding process */
 	memset(padMsg, 0x00, pmLen);
 	memcpy(padMsg, msg, mLen);
 	padMsg[mLen] = 0x80;
 	for (size_t pmIdx = 8; pmIdx > 0; pmIdx--) {
-		padMsg[pmLen - pmIdx] = (U8)((mLen * 8) >> (pmIdx * 8 - 8));
+		padMsg[pmLen - pmIdx] = (uint8_t)((mLen * 8) >> (pmIdx * 8 - 8));
 	}
 
 	/* Divide the padded message into 512-bit chunks */
@@ -64,11 +60,11 @@ int SHA1Hash(const U8 *restrict msg, const U64 mLen, U8 *restrict digest) {
 		}
 		
 		/* Initialise the working variables with the intermediate hash value */
-		U32 a = h[0], b = h[1], c = h[2], d = h[3], e = h[4], t, f;
+		uint32_t a = h[0], b = h[1], c = h[2], d = h[3], e = h[4], t, f;
 
 		/* Begin the compression function */
 		for (size_t wIdx = 0; wIdx < 80; wIdx++) {
-			f = (wIdx / 20 == 0) ? d ^ (b & (c ^ d) : (wIdx / 20 == 1 || wIdx / 20 == 3) ? b ^ c ^ d : (b & c) | (d & (b | c));
+			f = (wIdx / 20 == 0) ? d ^ (b & (c ^ d)) : (wIdx / 20 == 1 || wIdx / 20 == 3) ? b ^ c ^ d : (b & c) | (d & (b | c));
 			t = ((a << 5) | (a >> 27)) + f + e + k[wIdx / 20] + word[wIdx];
 			e = d;
 			d = c;
@@ -87,7 +83,7 @@ int SHA1Hash(const U8 *restrict msg, const U64 mLen, U8 *restrict digest) {
 
 	/* Copy the resultant hash into the digest buffer (big-endian) */
 	for (size_t dIdx = 0; dIdx < 20; dIdx++) {
-		digest[dIdx] = (U8)(h[dIdx / 4] >> (24 - ((dIdx % 4) * 8)));
+		digest[dIdx] = (uint8_t)(h[dIdx / 4] >> (24 - ((dIdx % 4) * 8)));
 	}
 
 	return 0;
