@@ -28,8 +28,8 @@ int compactSHA1(const uint8_t *restrict msg, const uint64_t msg_len, uint8_t *re
     if (!msg || !digest)
         return -1;
 
-	/* Calculate the total length of message plus padding */
-	uint64_t pmLen = mLen + (64 - (mLen % 56) + ((mLen < 56) ? 0 : 8));
+    /* Calculate the total length of message plus padding */
+    uint64_t pad_msg_len = msg_len + (64 - (msg_len % 64));
 
     /* Initialise the word schedule, the padded message, the IVs, and the constants */
     uint32_t word[80];
