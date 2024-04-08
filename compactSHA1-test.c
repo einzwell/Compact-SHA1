@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "compactSHA1.c"
 
-// TODO: Inspect test vector 6
+// TODO: Inspect test vector #5
 
 int main() {
     const uint8_t *strings[] = {
