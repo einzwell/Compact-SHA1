@@ -1,6 +1,6 @@
 /*!
  * @file compactSHA1-test.c
- * @author Yoga Smara (bravadine)
+ * @author Einzwell (einzwell\@protonmail.com)
  * @brief A file test to check compactSHA1()'s functionality
  * @see <a href="https://www.di-mgt.com.au/sha_testvectors.html">Test vector reference</a>
  */
@@ -39,9 +39,8 @@ int main() {
 
         compactSHA1(strings[i], strlen((char *)strings[i]), (uint8_t *)computedResult);
         printf("\nHASH RESULT: ");
-        for (int j = 0; j < 20; j++) {
+        for (int j = 0; j < 20; j++)
             printf("%02x", computedResult[j]);
-        }
 
         printf("\nMATCH      : %s\n\n", memcmp(testVectors[i], computedResult, 20) ? "FALSE" : "TRUE");
     }

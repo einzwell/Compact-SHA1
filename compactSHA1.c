@@ -1,6 +1,6 @@
 /*!
  * @file compactSHA1.c
- * @author Yoga Smara (bravadine)
+ * @author Einzwell (einzwell\@protonmail.com)
  * @brief A compact and portable implementation of SHA-1 in C with no external dependencies.
  *
  * This implementation is largely based on NIST's FIPS Publication 180-4 with
@@ -11,7 +11,7 @@
  */
 
 #include <stdint.h> // For fixed-width datatypes.
-#include <string.h> // For memset and memcpy; may be replaced with own customised functions if required.
+#include <string.h> // For memset and memcpy; may be replaced with customised functions if required.
 
 /*!
  * @brief Calculates the SHA-1 hash of given input.
