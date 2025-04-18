@@ -2,13 +2,12 @@
  * @file compactSHA1-test.c
  * @author Einzwell (einzwell\@protonmail.com)
  * @brief A file test to check compactSHA1()'s functionality
- * @see <a href="https://www.di-mgt.com.au/sha_testvectors.html">Test vector reference</a>
+ * @see <a href="https://www.di-mgt.com.au/sha_testvectors.html">Test vector
+ * reference</a>
  */
 
-#include <stdio.h>
 #include "compactSHA1.c"
-
-// TODO: Inspect test vector #5
+#include <stdio.h>
 
 int main() {
     const uint8_t *strings[] = {
@@ -32,17 +31,26 @@ int main() {
     uint8_t computedResult[20];
 
     for (int i = 0; i < 6; i++) {
-        printf("[TEST %d]\nSTRING     : \"%s\"\n", i + 1, strings[i]);
+        compactSHA1(strings[i],
+            strlen((char *)strings[i]),
+            (uint8_t *)computedResult);
+
+        const uint8_t result = memcmp(testVectors[i], computedResult, 20);
+
+        printf("[TEST %d - %s]\nSTRING     : \"%s\"\n",
+            i + 1,
+            result == 0 ? "TRUE" : "FALSE",
+            strings[i]);
+
         printf("TEST VECTOR: ");
         for (int j = 0; j < 20; j++)
             printf("%02x", testVectors[i][j]);
 
-        compactSHA1(strings[i], strlen((char *)strings[i]), (uint8_t *)computedResult);
         printf("\nHASH RESULT: ");
         for (int j = 0; j < 20; j++)
             printf("%02x", computedResult[j]);
 
-        printf("\nMATCH      : %s\n\n", memcmp(testVectors[i], computedResult, 20) ? "FALSE" : "TRUE");
+        printf("\n\n");
     }
 
     return 0;
